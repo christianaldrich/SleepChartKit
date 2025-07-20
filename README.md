@@ -22,14 +22,14 @@ A clean, lightweight SwiftUI package for displaying beautiful sleep stage visual
 Add SleepChartKit to your project via Xcode:
 
 1. File → Add Package Dependencies
-2. Enter: `https://github.com/yourusername/SleepChartKit`
+2. Enter: `https://github.com/DanielJamesTronca/SleepChartKit`
 3. Select version and add to target
 
 Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yourusername/SleepChartKit", from: "1.0.0")
+    .package(url: "https://github.com/DanielJamesTronca/SleepChartKit", from: "1.0.0")
 ]
 ```
 
