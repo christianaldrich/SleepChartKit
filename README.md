@@ -282,7 +282,6 @@ HealthKit integration requires:
 SleepChartKit is available under the MIT license. See the LICENSE file for more info.
 
 ## Example
-
-![Sleep Chart Example](example.png)
+<img width="1920" height="1080" alt="Shots Mockups (43)" src="https://github.com/user-attachments/assets/4bb626ef-51e0-40cb-ab10-220226abf814" />
 
 *Sample sleep chart showing a night's sleep with deep sleep, REM, and wake periods.*
