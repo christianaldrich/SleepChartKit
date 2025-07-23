@@ -102,6 +102,8 @@ struct CircularChartView: View {
 
 ### HealthKit Integration
 
+<img width="1920" height="1080" alt="Gym Hero Frame 481030" src="https://github.com/user-attachments/assets/231b8ad7-e77f-4fcd-aa47-cf13f2358c42" />
+
 ```swift
 import SwiftUI
 import HealthKit
