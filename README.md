@@ -1,6 +1,6 @@
 # SleepChartKit
 
-<img width="1920" height="1080" alt="Gym Hero Design" src="https://github.com/user-attachments/assets/b989e27f-e8fb-4710-9932-2324d8392f20" />
+<img width="1920" height="1080" alt="Shots Mockups (48)" src="https://github.com/user-attachments/assets/0c86507d-1243-43f7-b8e1-933446034500" />
 
 A clean, lightweight SwiftUI package for displaying beautiful sleep stage visualizations with comprehensive HealthKit integration.
 
