@@ -41,6 +41,9 @@ public struct SleepCircularChartView: View {
     /// Whether to show labels inside the circle
     private let showLabels: Bool
     
+    /// Sleep duration threshold in hours (default: 9 hours)
+    private let thresholdHours: Double
+    
     // MARK: - Initialization
     
     /// Creates a new circular sleep chart view with the specified configuration.
@@ -52,13 +55,15 @@ public struct SleepCircularChartView: View {
     ///   - size: Size of the circular chart (default: 160)
     ///   - backgroundColor: Background color of the chart (default: clear)
     ///   - showLabels: Whether to show time labels (default: true)
+    ///   - thresholdHours: Sleep duration threshold in hours for percentage calculation (default: 9)
     public init(
         samples: [SleepSample],
         colorProvider: SleepStageColorProvider = DefaultSleepStageColorProvider(),
         lineWidth: CGFloat = 16,
         size: CGFloat = 160,
         backgroundColor: Color = .clear,
-        showLabels: Bool = true
+        showLabels: Bool = true,
+        thresholdHours: Double = 9.0
     ) {
         self.samples = samples
         self.colorProvider = colorProvider
@@ -66,6 +71,7 @@ public struct SleepCircularChartView: View {
         self.size = size
         self.backgroundColor = backgroundColor
         self.showLabels = showLabels
+        self.thresholdHours = thresholdHours
     }
     
     // MARK: - Computed Properties
@@ -81,22 +87,23 @@ public struct SleepCircularChartView: View {
         return (start: firstSample.startDate, end: lastSample.endDate)
     }
     
-    /// Sleep segments with calculated angles for 24-hour circular rendering
+    /// Sleep segments with calculated angles based on percentage of threshold
     private var sleepSegments: [SleepSegment] {
-        guard let sleepPeriod = sleepPeriod else { return [] }
+        guard !samples.isEmpty else { return [] }
         
-        let calendar = Calendar.current
-        let dayStart = calendar.startOfDay(for: sleepPeriod.start)
+        let thresholdSeconds = thresholdHours * 3600
+        let sleepPercentage = min(totalDuration / thresholdSeconds, 1.0)
+        let totalArcDegrees = sleepPercentage * 360
         
         var segments: [SleepSegment] = []
+        var currentAngle: Double = -90 // Start at top (12 o'clock)
         
         for sample in samples {
-            let startOffset = sample.startDate.timeIntervalSince(dayStart)
-            let endOffset = sample.endDate.timeIntervalSince(dayStart)
+            let samplePercentage = sample.duration / totalDuration
+            let sampleArcDegrees = samplePercentage * totalArcDegrees
             
-            // Convert time to angles (24 hours = 360 degrees, starting at top = -90)
-            let startAngle = (startOffset / (24 * 3600)) * 360 - 90
-            let endAngle = (endOffset / (24 * 3600)) * 360 - 90
+            let startAngle = currentAngle
+            let endAngle = currentAngle + sampleArcDegrees
             
             segments.append(SleepSegment(
                 stage: sample.stage,
@@ -106,51 +113,13 @@ public struct SleepCircularChartView: View {
                 startDate: sample.startDate,
                 endDate: sample.endDate
             ))
+            
+            currentAngle = endAngle
         }
         
         return segments
     }
     
-    /// Gray background segments for non-sleep periods in the 24-hour circle
-    private var backgroundSegments: [BackgroundSegment] {
-        guard let sleepPeriod = sleepPeriod else { return [] }
-        
-        let calendar = Calendar.current
-        let dayStart = calendar.startOfDay(for: sleepPeriod.start)
-        let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart)!
-        
-        var backgroundSegs: [BackgroundSegment] = []
-        
-        // Before sleep period
-        if sleepPeriod.start > dayStart {
-            let startOffset = dayStart.timeIntervalSince(dayStart)
-            let endOffset = sleepPeriod.start.timeIntervalSince(dayStart)
-            
-            let startAngle = (startOffset / (24 * 3600)) * 360 - 90
-            let endAngle = (endOffset / (24 * 3600)) * 360 - 90
-            
-            backgroundSegs.append(BackgroundSegment(
-                startAngle: startAngle,
-                endAngle: endAngle
-            ))
-        }
-        
-        // After sleep period
-        if sleepPeriod.end < dayEnd {
-            let startOffset = sleepPeriod.end.timeIntervalSince(dayStart)
-            let endOffset = dayEnd.timeIntervalSince(dayStart)
-            
-            let startAngle = (startOffset / (24 * 3600)) * 360 - 90
-            let endAngle = (endOffset / (24 * 3600)) * 360 - 90
-            
-            backgroundSegs.append(BackgroundSegment(
-                startAngle: startAngle,
-                endAngle: endAngle
-            ))
-        }
-        
-        return backgroundSegs
-    }
     
     /// Start time for label display
     private var startTime: String? {
@@ -181,8 +150,8 @@ public struct SleepCircularChartView: View {
             }
             
             // Sun and moon symbols
-            if let sleepPeriod = sleepPeriod {
-                sleepStartEndSymbols(sleepPeriod: sleepPeriod)
+            if !sleepSegments.isEmpty {
+                sleepStartEndSymbols()
             }
             
             // Center content
@@ -206,9 +175,9 @@ public struct SleepCircularChartView: View {
     
     // MARK: - Symbol Views
     
-    /// Sun and moon symbols positioned on top of the colored segments within the chart
+    /// Sun and moon symbols positioned at the start and end of the sleep arc
     @ViewBuilder
-    private func sleepStartEndSymbols(sleepPeriod: (start: Date, end: Date)) -> some View {
+    private func sleepStartEndSymbols() -> some View {
         if let firstSegment = sleepSegments.first,
            let lastSegment = sleepSegments.last {
             
@@ -223,7 +192,7 @@ public struct SleepCircularChartView: View {
             let innerRingRadius = outerRingRadius
             let symbolOffset = innerRingRadius
             
-            // Moon symbol with consistent padding from start
+            // Moon symbol at start of sleep arc
             Image(systemName: "moon.fill")
                 .foregroundColor(.white)
                 .font(.caption2)
@@ -232,7 +201,7 @@ public struct SleepCircularChartView: View {
                     y: symbolOffset * sin(firstSymbolAngle * .pi / 180)
                 )
             
-            // Sun symbol with consistent padding from end
+            // Sun symbol at end of sleep arc
             Image(systemName: "sun.max.fill")
                 .foregroundColor(.white)
                 .font(.caption2)
@@ -275,30 +244,6 @@ public struct SleepCircularChartView: View {
             )
         )
         
-        // Draw gray background segments for non-sleep periods on inner ring (ON TOP)
-        for backgroundSegment in backgroundSegments {
-            let startAngle = Angle.degrees(backgroundSegment.startAngle)
-            let endAngle = Angle.degrees(backgroundSegment.endAngle)
-            
-            var path = Path()
-            path.addArc(
-                center: center,
-                radius: innerRingRadius,
-                startAngle: startAngle,
-                endAngle: endAngle,
-                clockwise: false
-            )
-            
-            context.stroke(
-                path,
-                with: .color(Color.gray.opacity(0.2)),
-                style: StrokeStyle(
-                    lineWidth: lineWidth,
-                    lineCap: .butt,
-                    lineJoin: .miter
-                )
-            )
-        }
         
         // Draw sleep stage segments on inner ring
         for segment in sleepSegments {
@@ -399,12 +344,6 @@ private struct SleepSegment {
     let endDate: Date
 }
 
-/// Represents a background segment for non-sleep periods
-private struct BackgroundSegment {
-    let id = UUID()
-    let startAngle: Double
-    let endAngle: Double
-}
 
 // MARK: - Preview
 
