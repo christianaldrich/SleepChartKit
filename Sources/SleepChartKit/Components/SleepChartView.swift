@@ -1,15 +1,22 @@
 import SwiftUI
 
-/// A SwiftUI view that displays sleep data as a timeline chart with stages, time axis, and legend.
+/// A SwiftUI view that displays sleep data as either a timeline or circular chart.
 ///
-/// The chart displays sleep stages as horizontal bars positioned vertically by stage type,
-/// with connecting curves between different stages. It includes a time axis and legend
-/// showing stage durations.
+/// The chart can display sleep stages as horizontal bars (timeline style) or as 
+/// color-coded segments around a circle (circular style). Both styles include 
+/// customizable colors and optional legends.
 ///
 /// ## Usage
 /// ```swift
-/// // Basic usage with sleep samples
+/// // Basic timeline usage
 /// SleepChartView(samples: sleepSamples)
+///
+/// // Circular chart
+/// SleepChartView(
+///     samples: sleepSamples,
+///     style: .circular,
+///     circularConfig: CircularChartConfiguration(size: 200, lineWidth: 20)
+/// )
 ///
 /// // With custom providers
 /// SleepChartView(
@@ -24,6 +31,12 @@ public struct SleepChartView: View {
     
     /// The sleep samples to display in the chart
     private let samples: [SleepSample]
+    
+    /// The visual style of the chart
+    private let style: SleepChartStyle
+    
+    /// Configuration for circular charts
+    private let circularConfig: CircularChartConfiguration
     
     /// Provider for sleep stage colors
     private let colorProvider: SleepStageColorProvider
@@ -43,18 +56,24 @@ public struct SleepChartView: View {
     ///
     /// - Parameters:
     ///   - samples: The sleep samples to display
+    ///   - style: The visual style of the chart (default: .timeline)
+    ///   - circularConfig: Configuration for circular charts (default: .default)
     ///   - colorProvider: Provider for sleep stage colors (default: DefaultSleepStageColorProvider)
     ///   - durationFormatter: Formatter for duration display (default: DefaultDurationFormatter)
     ///   - timeSpanGenerator: Generator for time axis markers (default: DefaultTimeSpanGenerator)
     ///   - displayNameProvider: Provider for stage names (default: DefaultSleepStageDisplayNameProvider)
     public init(
         samples: [SleepSample],
+        style: SleepChartStyle = .timeline,
+        circularConfig: CircularChartConfiguration = .default,
         colorProvider: SleepStageColorProvider = DefaultSleepStageColorProvider(),
         durationFormatter: DurationFormatter = DefaultDurationFormatter(),
         timeSpanGenerator: TimeSpanGenerator = DefaultTimeSpanGenerator(),
         displayNameProvider: SleepStageDisplayNameProvider = DefaultSleepStageDisplayNameProvider()
     ) {
         self.samples = samples
+        self.style = style
+        self.circularConfig = circularConfig
         self.colorProvider = colorProvider
         self.durationFormatter = durationFormatter
         self.timeSpanGenerator = timeSpanGenerator
@@ -95,6 +114,18 @@ public struct SleepChartView: View {
     // MARK: - Body
     
     public var body: some View {
+        switch style {
+        case .timeline:
+            timelineChartView
+        case .circular:
+            circularChartView
+        }
+    }
+    
+    // MARK: - Chart Views
+    
+    /// Timeline chart view (original implementation)
+    private var timelineChartView: some View {
         VStack(spacing: SleepChartConstants.componentSpacing) {
             // Chart area with timeline graph and dotted lines overlay
             chartWithDottedLinesOverlay
@@ -118,6 +149,28 @@ public struct SleepChartView: View {
             .padding(.top, SleepChartConstants.legendTopPadding)
         }
         .frame(height: SleepChartConstants.totalChartHeight)
+    }
+    
+    /// Circular chart view with optional legend
+    private var circularChartView: some View {
+        VStack(spacing: 20) {
+            SleepCircularChartView(
+                samples: samples,
+                colorProvider: colorProvider,
+                lineWidth: circularConfig.lineWidth,
+                size: circularConfig.size,
+                showLabels: circularConfig.showLabels
+            )
+            
+            // Optional legend for circular charts
+            SleepLegendView(
+                activeStages: activeStages,
+                sleepData: sleepData,
+                colorProvider: colorProvider,
+                durationFormatter: durationFormatter,
+                displayNameProvider: displayNameProvider
+            )
+        }
     }
     
     // MARK: - Private Views
