@@ -41,6 +41,9 @@ public struct SleepCircularChartView: View {
     /// Whether to show labels inside the circle
     private let showLabels: Bool
     
+    /// Whether to show sun/moon icons at start/end of sleep arc
+    private let showIcons: Bool
+    
     /// Sleep duration threshold in hours (default: 9 hours)
     private let thresholdHours: Double
     
@@ -55,6 +58,7 @@ public struct SleepCircularChartView: View {
     ///   - size: Size of the circular chart (default: 160)
     ///   - backgroundColor: Background color of the chart (default: clear)
     ///   - showLabels: Whether to show time labels (default: true)
+    ///   - showIcons: Whether to show sun/moon icons at start/end of sleep arc (default: true)
     ///   - thresholdHours: Sleep duration threshold in hours for percentage calculation (default: 9)
     public init(
         samples: [SleepSample],
@@ -63,6 +67,7 @@ public struct SleepCircularChartView: View {
         size: CGFloat = 160,
         backgroundColor: Color = .clear,
         showLabels: Bool = true,
+        showIcons: Bool = true,
         thresholdHours: Double = 9.0
     ) {
         self.samples = samples
@@ -71,6 +76,7 @@ public struct SleepCircularChartView: View {
         self.size = size
         self.backgroundColor = backgroundColor
         self.showLabels = showLabels
+        self.showIcons = showIcons
         self.thresholdHours = thresholdHours
     }
     
@@ -150,7 +156,7 @@ public struct SleepCircularChartView: View {
             }
             
             // Sun and moon symbols
-            if !sleepSegments.isEmpty {
+            if showIcons && !sleepSegments.isEmpty {
                 sleepStartEndSymbols()
             }
             
