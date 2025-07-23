@@ -56,6 +56,50 @@ struct ContentView: View {
 }
 ```
 
+### Circular Chart
+
+The circular chart displays sleep duration as a percentage of a configurable threshold, starting from the top (12 o'clock) and filling clockwise:
+
+```swift
+import SwiftUI
+import SleepChartKit
+
+struct CircularChartView: View {
+    let sleepSamples = [
+        SleepSample(stage: .asleepDeep, startDate: date1, endDate: date2),
+        SleepSample(stage: .asleepCore, startDate: date2, endDate: date3),
+        SleepSample(stage: .asleepREM, startDate: date3, endDate: date4)
+    ]
+    
+    var body: some View {
+        VStack(spacing: 30) {
+            // Basic circular chart (9-hour threshold by default)
+            SleepCircularChartView(samples: sleepSamples)
+            
+            // Custom threshold and styling
+            SleepCircularChartView(
+                samples: sleepSamples,
+                lineWidth: 20,
+                size: 200,
+                showIcons: false,
+                thresholdHours: 8.0
+            )
+        }
+        .padding()
+    }
+}
+```
+
+#### Circular Chart Parameters
+
+- `thresholdHours` - Sleep duration threshold for percentage calculation (default: 9.0 hours)
+- `showIcons` - Display sun/moon icons at start/end of sleep arc (default: true)
+- `lineWidth` - Width of the circular segments (default: 16)
+- `size` - Size of the circular chart (default: 160)
+- `showLabels` - Show duration and time labels in center (default: true)
+
+**Example:** If a user sleeps 7 hours with a 9-hour threshold, the circle fills 77.8% (7/9) of the way around.
+
 ### HealthKit Integration
 
 ```swift
@@ -197,7 +241,8 @@ SleepChartKit follows SOLID principles with a clean, modular architecture:
 
 ### Core Components
 
-- **SleepChartView** - Main chart container
+- **SleepChartView** - Main timeline chart container
+- **SleepCircularChartView** - Circular percentage-based chart with threshold support
 - **SleepTimelineGraph** - Timeline visualization with Canvas
 - **SleepTimeAxisView** - Time labels and axis
 - **SleepLegendView** - Sleep stage legend

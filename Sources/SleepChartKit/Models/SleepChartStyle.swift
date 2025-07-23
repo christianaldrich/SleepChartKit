@@ -27,7 +27,7 @@ public struct CircularChartConfiguration: Sendable {
     ///   - size: Size of the circular chart (default: 160)
     ///   - showLabels: Whether to show time labels (default: true)
     public init(
-        lineWidth: CGFloat = 20,
+        lineWidth: CGFloat = 16,
         size: CGFloat = 160,
         showLabels: Bool = true
     ) {
