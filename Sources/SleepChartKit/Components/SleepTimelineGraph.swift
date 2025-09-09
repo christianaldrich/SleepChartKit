@@ -181,7 +181,8 @@ public struct SleepTimelineGraph: View {
 
         context.stroke(
             connectorPath,
-            with: .color(.gray.opacity(SleepChartConstants.connectorOpacity)),
+//            with: .color(.gray.opacity(SleepChartConstants.connectorOpacity)),
+            with: .color(.red.opacity(SleepChartConstants.connectorOpacity)),
             lineWidth: SleepChartConstants.connectorLineWidth
         )
     }
