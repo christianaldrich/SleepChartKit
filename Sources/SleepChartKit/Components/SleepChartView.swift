@@ -194,26 +194,69 @@ public struct SleepChartView: View {
     }
     
     /// Dotted vertical lines overlay for time axis alignment
+//    private var dottedLinesOverlay: some View {
+//        GeometryReader { geometry in
+//            let axisHeight = geometry.size.height - SleepChartConstants.chartHeight
+//            let lineBottomY = geometry.size.height - (axisHeight / 2)
+//            let lineTopY = geometry.size.height - SleepChartConstants.chartHeight
+//
+//            Path { path in
+//                // Start line
+//                path.move(to: CGPoint(x: 0, y: lineBottomY))
+//                path.addLine(to: CGPoint(x: 0, y: lineTopY))
+//
+//                // End line
+//                path.move(to: CGPoint(x: geometry.size.width, y: lineBottomY))
+//                path.addLine(to: CGPoint(x: geometry.size.width, y: lineTopY))
+//
+//                // Intermediate time span lines
+//                for span in timeSpans {
+//                    let xPos = geometry.size.width * span.position
+//                    path.move(to: CGPoint(x: xPos, y: lineBottomY))
+//                    path.addLine(to: CGPoint(x: xPos, y: lineTopY))
+//                }
+//            }
+//            .stroke(
+//                style: StrokeStyle(
+//                    lineWidth: SleepChartConstants.dottedLineWidth,
+//                    dash: SleepChartConstants.dottedLineDashPattern
+//                )
+//            )
+//            .foregroundColor(.secondary.opacity(SleepChartConstants.dottedLineOpacity))
+//        }
+//        .frame(height: SleepChartConstants.chartHeight + SleepChartConstants.dottedLinesHeightExtension)
+//        .padding(.bottom, SleepChartConstants.dottedLinesBottomPadding)
+//    }
+    
     private var dottedLinesOverlay: some View {
         GeometryReader { geometry in
             let axisHeight = geometry.size.height - SleepChartConstants.chartHeight
             let lineBottomY = geometry.size.height - (axisHeight / 2)
             let lineTopY = geometry.size.height - SleepChartConstants.chartHeight
+            
+            // 🔹 Get number of stages (assuming SleepStage.allCases exists)
+            let numberOfStages = SleepStage.allCases.count
+            let stageHeight = (lineBottomY - lineTopY) / CGFloat(numberOfStages)
 
             Path { path in
-                // Start line
+                // 🔹 Vertical lines
                 path.move(to: CGPoint(x: 0, y: lineBottomY))
                 path.addLine(to: CGPoint(x: 0, y: lineTopY))
 
-                // End line
                 path.move(to: CGPoint(x: geometry.size.width, y: lineBottomY))
                 path.addLine(to: CGPoint(x: geometry.size.width, y: lineTopY))
 
-                // Intermediate time span lines
                 for span in timeSpans {
                     let xPos = geometry.size.width * span.position
                     path.move(to: CGPoint(x: xPos, y: lineBottomY))
                     path.addLine(to: CGPoint(x: xPos, y: lineTopY))
+                }
+
+                // 🔹 Horizontal lines aligned to stages
+                for i in 0...numberOfStages {
+                    let yPos = lineTopY + (CGFloat(i) * stageHeight)
+                    path.move(to: CGPoint(x: 0, y: yPos))
+                    path.addLine(to: CGPoint(x: geometry.size.width, y: yPos))
                 }
             }
             .stroke(
@@ -227,4 +270,5 @@ public struct SleepChartView: View {
         .frame(height: SleepChartConstants.chartHeight + SleepChartConstants.dottedLinesHeightExtension)
         .padding(.bottom, SleepChartConstants.dottedLinesBottomPadding)
     }
+
 }
