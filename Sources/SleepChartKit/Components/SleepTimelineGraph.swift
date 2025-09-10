@@ -132,7 +132,7 @@ public struct SleepTimelineGraph: View {
                 
                 context.stroke(
                     path,with: .color(Color(hex:"#9DC6E2")),      // 👈 border color
-                    lineWidth: 2               // 👈 border width
+                    lineWidth: 1              // 👈 border width
                 )
 
                 // Draw connector curve between different sleep stages
