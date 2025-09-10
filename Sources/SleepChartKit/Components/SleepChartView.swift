@@ -139,14 +139,14 @@ public struct SleepChartView: View {
             .padding(.top, SleepChartConstants.axisNegativeTopPadding)
 
             // Legend showing sleep stages with colors and durations
-            SleepLegendView(
-                activeStages: activeStages,
-                sleepData: sleepData,
-                colorProvider: colorProvider,
-                durationFormatter: durationFormatter,
-                displayNameProvider: displayNameProvider
-            )
-            .padding(.top, SleepChartConstants.legendTopPadding)
+//            SleepLegendView(
+//                activeStages: activeStages,
+//                sleepData: sleepData,
+//                colorProvider: colorProvider,
+//                durationFormatter: durationFormatter,
+//                displayNameProvider: displayNameProvider
+//            )
+//            .padding(.top, SleepChartConstants.legendTopPadding)
         }
         .frame(height: SleepChartConstants.totalChartHeight)
     }
