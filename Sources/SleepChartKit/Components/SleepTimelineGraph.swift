@@ -131,8 +131,8 @@ public struct SleepTimelineGraph: View {
                 context.fill(path, with: .color(colorProvider.color(for: currentStage)))
                 
                 context.stroke(
-                    path,with: .color(.red),      // 👈 border color
-                    lineWidth: 12               // 👈 border width
+                    path,with: .color(Color(hex:"#9DC6E2")),      // 👈 border color
+                    lineWidth: 2               // 👈 border width
                 )
 
                 // Draw connector curve between different sleep stages
