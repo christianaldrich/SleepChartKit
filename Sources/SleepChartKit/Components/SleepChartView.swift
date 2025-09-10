@@ -178,6 +178,10 @@ public struct SleepChartView: View {
     /// Chart area combining the sleep timeline graph with dotted vertical lines overlay
     private var chartWithDottedLinesOverlay: some View {
         ZStack(alignment: .bottom) {
+            
+            // Dotted vertical lines connecting chart to time axis
+            dottedLinesOverlay
+            
             // Main sleep timeline graph showing sleep stages as horizontal bars
             SleepTimelineGraph(
                 samples: samples,
@@ -185,9 +189,11 @@ public struct SleepChartView: View {
             )
             .frame(height: SleepChartConstants.chartHeight)
             .clipShape(RoundedRectangle(cornerRadius: SleepChartConstants.chartClipCornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: SleepChartConstants.chartClipCornerRadius)
+                    .stroke(Color.red, lineWidth: 2) // 👈 border color + width
+            )
 
-            // Dotted vertical lines connecting chart to time axis
-            dottedLinesOverlay
         }
     }
     
