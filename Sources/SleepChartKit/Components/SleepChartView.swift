@@ -254,9 +254,12 @@ public struct SleepChartView: View {
 
                 // 🔹 Horizontal lines aligned to stages
                 for i in 0...numberOfStages {
-                    let yPos = lineTopY + (CGFloat(i) * stageHeight)
-                    path.move(to: CGPoint(x: 0, y: yPos))
-                    path.addLine(to: CGPoint(x: geometry.size.width, y: yPos))
+                    if i != 0 || i != numberOfStages - 1 {
+                        let yPos = lineTopY + (CGFloat(i) * stageHeight)
+                        path.move(to: CGPoint(x: 0, y: yPos))
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: yPos))
+                    }
+                   
                 }
             }
             .stroke(
