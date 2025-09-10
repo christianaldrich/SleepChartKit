@@ -17,7 +17,7 @@ public protocol SleepStageColorProvider {
 public extension SleepStageColorProvider {
     func color(for healthKitValue: HKCategoryValueSleepAnalysis) -> Color {
         guard let stage = SleepStage(healthKitValue: healthKitValue) else {
-            return .red
+            return .gray
         }
         return color(for: stage)
     }

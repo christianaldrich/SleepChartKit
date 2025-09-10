@@ -129,6 +129,10 @@ public struct SleepTimelineGraph: View {
                 let cornerRadius = stageBarHeight / SleepChartConstants.barCornerRadiusRatio
                 let path = Path(roundedRect: currentRect, cornerRadius: cornerRadius)
                 context.fill(path, with: .color(colorProvider.color(for: currentStage)))
+                context.stroke(
+                    path,with: .color(.black),      // 👈 border color
+                    lineWidth: 2               // 👈 border width
+                )
 
                 // Draw connector curve between different sleep stages
                 if let prevRect = previousRect, 
