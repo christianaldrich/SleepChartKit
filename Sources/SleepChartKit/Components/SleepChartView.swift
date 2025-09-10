@@ -235,7 +235,7 @@ public struct SleepChartView: View {
             let lineTopY = geometry.size.height - SleepChartConstants.chartHeight
             
             // 🔹 Get number of stages (assuming SleepStage.allCases exists)
-            let numberOfStages = 4
+            let numberOfStages = SleepStage.allCases.count
             let stageHeight = (lineBottomY - lineTopY) / CGFloat(numberOfStages)
 
             Path { path in
